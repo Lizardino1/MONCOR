@@ -17,10 +17,10 @@ const char* apiKey = "}&apikey=8d3cdd9e751fb13cc20d970b26fa96f7";
 const int trigPin = 12;
 const int echoPin = 13;
 long duration;
-float distanceCm;
+double distanceCm;
 double velossom, temp;
 int i;
-float tempdist[3], tempdistMax[3],tempdistMin[3];
+double tempdist[3], tempdistMax[3],tempdistMin[3];
 
 
 
@@ -172,22 +172,23 @@ float distancia(){
   duration = pulseIn(echoPin, HIGH);
 
   
-  temp = bmp.readTemperature();
+  temp = (bmp.readTemperature() + bmp1.readTemperature())/2;
   
 
   Serial.print("duração de pulso: ");
   Serial.println(duration);
   
-  velossom = 330.40 + (0.59*temp);
-  velossom = velossom / 10000;
+  velossom = 331.3 + (0.606 * temp);
+  //distance[j] = duration / 20000.0 * soundSpeed; 
   Serial.print("velocidade do som: ");
   Serial.println(velossom);
-  distanceCm = duration * (velossom/2);
+  distanceCm = duration/20000.0 * velossom;
   return distanceCm;
 }
 
+//Primeiro Algoritmo de Correção com base em leituras instantâneas.
 
-float distanciaFinal(){
+double distanciaFinal(){
   float tol = 0.15;
 
   for(i=0;i<3;i++){
@@ -205,7 +206,6 @@ float distanciaFinal(){
     return tempdist[2];
 
   }
-
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -248,7 +248,7 @@ void loop() {
  
  
  http.end();
- delay(30000);
+ delay(300000);
 }
 
 String sendPhoto() {
